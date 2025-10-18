@@ -1,0 +1,580 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>OG — The Solana Holder</title>
+  <meta name="description" content="OG — The Solana Holder. The mascot for Solana holders. Buy $OG on Raydium." />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;500;700;900&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg-1: #06021a;
+      --bg-2: #170033;
+      --accent1: #00ffa3; /* cyan-ish */
+      --accent2: #7b61ff; /* purple */
+      --accent3: #6eff9a; /* greenish */
+      --muted: #bfc3e6;
+      --card: rgba(255,255,255,0.035);
+      --glass: rgba(255,255,255,0.03);
+      --glow: 0 18px 60px rgba(123,63,228,0.16);
+      --container: 1200px;
+    }
+
+    *{box-sizing:border-box;margin:0;padding:0}
+    html,body{height:100%}
+    body{
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      color:#fff;
+      background: radial-gradient(1200px 600px at 20% 10%, rgba(123,63,228,0.06), transparent 15%),
+                  radial-gradient(1000px 500px at 80% 90%, rgba(0,255,163,0.02), transparent 12%),
+                  linear-gradient(180deg, var(--bg-1) 0%, var(--bg-2) 100%);
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      overflow-x:hidden;
+      position: relative;
+    }
+
+    #canvas-rain {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      display: block;
+    }
+
+    /* === COSMIC RAIN (Solana Logos Falling) === */
+    .cosmic-rain {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+      z-index: 1;
+    }
+
+    .solana-drop {
+      position: absolute;
+      top: -40px;
+      width: 28px;
+      height: 28px;
+      opacity: 0.9;
+      animation: fallCosmic linear forwards;
+      will-change: transform;
+      filter: drop-shadow(0 0 6px rgba(123,97,255,0.7));
+    }
+
+    @keyframes fallCosmic {
+      0% { transform: translateY(0) rotate(0deg); opacity: 0.9; }
+      90% { opacity: 0.9; }
+      100% { transform: translateY(110vh) rotate(360deg); opacity: 0; }
+    }
+
+    #stars-root{position:fixed;inset:0;z-index:0;pointer-events:none}
+
+    .wrap{
+      max-width:var(--container);
+      margin:0 auto;
+      padding:28px;
+      position:relative;
+      z-index:2;
+    }
+
+    header{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:16px;
+      margin-bottom:18px;
+    }
+
+    .brand{display:flex;align-items:center;gap:12px}
+    .logo{
+      width:56px;height:56px;min-width: 56px;   
+  min-height: 56px;  
+  max-width: 56px;   
+  max-height: 56px;  border-radius:50%;
+      background:linear-gradient(135deg,var(--accent1),var(--accent2));
+      display:flex;align-items:center;justify-content:center;overflow:hidden;border:2px solid rgba(255,255,255,0.06);
+      box-shadow:0 10px 40px rgba(123,63,228,0.12);
+    }
+    .logo img{width:100%;height:100%;object-fit:cover;display: block;}
+
+    nav{display:flex;align-items:center;gap:12px}
+    nav a{color:var(--muted);text-decoration:none;font-weight:600;margin-left:8px}
+    nav a:hover{color:#fff;opacity:0.95}
+
+    .cta{
+      background:linear-gradient(90deg,var(--accent1),var(--accent2));
+      color:#001217;padding:8px 14px;border-radius:999px;font-weight:800;text-decoration:none;box-shadow:var(--glow)
+    }
+
+    .hero{
+      display:grid;
+      grid-template-columns: 1fr 520px;
+      gap:28px;
+      align-items:center;
+      margin-top:6px;
+      padding:44px 0;
+    }
+
+    .hero-left h1{
+      font-size:56px;line-height:1.02;margin-bottom:12px;font-weight:900;
+      letter-spacing:-1px;
+    }
+    .accent{
+      background: linear-gradient(90deg,var(--accent1),var(--accent2));
+      -webkit-background-clip:text;background-clip:text;color:transparent;
+      display:inline-block;
+    }
+
+    .lead{color:var(--muted);max-width:680px;font-size:16px;margin-bottom:18px}
+
+    .btns{margin-top:18px;display:flex;gap:12px;flex-wrap:wrap}
+    .btn{
+      display:inline-block;padding:12px 18px;border-radius:999px;font-weight:800;text-decoration:none;
+    }
+    .btn-primary{background:linear-gradient(90deg,var(--accent1),var(--accent2));color:#001217}
+    .btn-ghost{border:1px solid rgba(255,255,255,0.06);color:var(--muted);background:transparent}
+
+    .meta{
+      margin-top:14px;color:var(--muted);font-size:13px;
+    }
+    .contract{
+      display:inline-block;padding:8px 12px;background:var(--glass);border-radius:999px;margin-top:10px;color:var(--accent1);font-weight:700;border:1px solid rgba(255,255,255,0.03)
+    }
+
+    .hero-right{
+      display:flex;align-items:center;justify-content:center;
+    }
+
+    .hero-card{
+      width:100%;
+      background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      border-radius:18px;padding:12px;box-shadow:0 22px 80px rgba(11,0,36,0.6);
+      display:flex;align-items:center;justify-content:center;
+    }
+
+    .hero-card img{width:100%;height:520px;object-fit:contain;border-radius:12px}
+
+    .info-row{display:flex;gap:12px;align-items:center;margin-top:18px;flex-wrap:wrap}
+    .pill{background:var(--card);padding:10px 14px;border-radius:12px;color:var(--muted);font-weight:700;font-size:13px}
+
+    section{padding:38px 0;border-top:1px solid rgba(255,255,255,0.02)}
+    h2{font-size:28px;margin-bottom:14px}
+
+    .lore-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+    .lore-card{
+      background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      padding:16px;border-radius:12px;display:flex;gap:12px;align-items:flex-start;box-shadow:0 8px 40px rgba(0,0,0,0.45)
+    }
+    .lore-card img{width:96px;height:96px;object-fit:cover;border-radius:10px}
+
+    .tweet-strip{
+      margin-top:18px;display:flex;gap:12px;overflow-x:auto;padding-bottom:8px;padding-left:6px;
+      -webkit-overflow-scrolling:touch;
+    }
+    .tweet{
+      min-width:340px;max-width:340px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      border-radius:12px;padding:12px;box-shadow:0 8px 26px rgba(0,0,0,0.45);flex-shrink:0;
+      display:flex;gap:12px;align-items:flex-start;
+      transition: transform 0.3s ease;
+    }
+    .tweet:hover {
+      transform: scale(1.03);
+    }
+
+    .tweet img {
+      width:64px;
+      height:64px;
+      border-radius:10px;
+      object-fit:cover;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .tweet:hover img {
+      transform: scale(1.15);
+      box-shadow: 0 0 20px rgba(123, 97, 255, 0.4);
+    }
+
+    .tweet .t-body{color:var(--muted);font-size:14px}
+
+    .gallery-grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+      gap:12px;
+      margin-top:12px
+    }
+    .gallery-grid img{
+      width:100%;
+      height:160px;
+      object-fit:cover;
+      border-radius:10px;
+      box-shadow:0 8px 40px rgba(0,0,0,0.5);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .gallery-grid img:hover{
+      transform: scale(1.1);
+      box-shadow: 0 0 30px rgba(123, 97, 255, 0.5);
+      z-index: 2;
+    }
+    .gallery-strip {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  padding-bottom: 8px;
+  -webkit-overflow-scrolling: touch; /* smooth scroll mobile */
+}
+
+.gallery-strip::-webkit-scrollbar {
+  height: 8px;
+}
+
+.gallery-strip::-webkit-scrollbar-thumb {
+  background: linear-gradient(90deg, var(--accent1), var(--accent2));
+  border-radius: 999px;
+}
+
+.gallery-item {
+  flex: 0 0 auto; 
+  min-width: 160px;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.5);
+  transition: transform 0.3s ease;
+}
+
+.gallery-item img {
+  width: 100%;
+  height: 250px;
+  object-fit: cover;
+}
+
+.gallery-item .caption {
+  font-size: 12px;
+  color: var(--muted);
+  padding: 4px 6px;
+  text-align: center;
+}
+
+.gallery-item:hover {
+  transform: scale(1.05);
+}
+.copy-btn {
+  margin-left: 10px;
+  padding: 6px 12px;
+  font-size: 13px;
+  font-weight: 700;
+  border: none;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--accent1), var(--accent2));
+  color: #001217;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 4px 15px rgba(123, 63, 228, 0.4);
+}
+
+.copy-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 20px rgba(123, 63, 228, 0.6);
+}
+
+.copy-btn:active {
+  transform: scale(0.95);
+  box-shadow: 0 2px 8px rgba(123, 63, 228, 0.5);
+}
+
+    .support-row{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:10px}
+    .support-card{background:linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:12px;border-radius:12px;display:flex;gap:10px;align-items:center}
+    .support-card a{color:var(--muted);text-decoration:none;font-weight:700}
+    .support-card a .small{display:block;font-size:12px;color:var(--muted)}
+
+    .team-row{display:flex;gap:12px;flex-wrap:wrap;margin-top:12px}
+    .member{width:140px;background:var(--card);padding:12px;border-radius:12px;text-align:center}
+    .member img{width:84px;height:84px;border-radius:50%;object-fit:cover;margin:0 auto 8px;display:block}
+
+    footer{padding:24px 0;color:var(--muted);text-align:center;border-top:1px solid rgba(255,255,255,0.02);margin-top:30px}
+
+    .tweet-strip::-webkit-scrollbar{height:8px}
+    .tweet-strip::-webkit-scrollbar-thumb{background:linear-gradient(90deg,var(--accent1),var(--accent2));border-radius:999px}
+
+    @media (max-width:1000px){
+      .hero{grid-template-columns:1fr}
+      .hero-card img{height:420px}
+      .lore-grid{grid-template-columns:1fr}
+    }
+    @media (max-width:600px){
+      .hero-left h1{font-size:30px}
+      .hero-card img{height:320px}
+      .tweet{min-width:280px;max-width:280px}
+    }
+    
+  </style>
+</head>
+<body>
+  <canvas id="canvas-rain"></canvas>
+  <div id="stars-root"></div>
+  <div class="cosmic-rain" id="cosmicRain"></div>
+  <div class="wrap" id="wrap">
+    <header>
+      <div class="brand">
+        <div class="logo"><img src="assets/OG.jpeg" alt="OG logo"></div>
+        <div>
+          <div style="font-weight:900;font-size:18px">OG</div>
+          <div style="font-size:12px;color:var(--muted)">The Solana Holder</div>
+        </div>
+      </div>
+
+      <nav>
+        <a href="#home">Home</a>
+        <a href="#features">Lore</a>
+        <a href="#gallery-editions">Gallery</a>
+      </nav>
+    </header>
+
+    <main>
+      <!-- HERO -->
+      <section class="hero" id="home">
+        <div class="hero-left">
+          <h1>OG — <span class="accent">The Solana Holder</span></h1>
+          <p class="lead">OG is the proud mascot for Solana holders — confident, chill, and ready to HODL. Grab your OG, join the fam, and become part of the legend.</p>
+
+          <div class="btns">
+            <a class="btn btn-primary" href="#buy">Buy $OG</a>
+            <a class="btn btn-ghost" href="#gallery-editions">View Gallery</a>
+          </div>
+
+            <div class="meta">
+  <div class="contract">
+    Contract: 
+    <span id="contractAddress">abcdefghijklmnopqrstu</span>
+    <button id="copyContract" class="copy-btn">Copy</button>
+  </div>
+</div>
+
+
+
+          <div class="info-row">
+            <div class="pill">Total Supply: 1,000,000,000 $OG</div>
+            <div class="pill">Network: Solana</div>
+            <div class="pill">Launch: Fair Launch</div>
+          </div>
+        </div>
+
+        <div class="hero-right">
+          <div class="hero-card">
+            <img src="assets/OG.jpeg" alt="OG hero">
+          </div>
+        </div>
+      </section>
+
+      <section id="features">
+        <h2>Why OG?</h2>
+        <div class="lore-grid">
+          <div class="lore-card">
+            <img src="assets/REALOG.jpeg" alt="">
+            <div>
+              <strong>Community Mascot</strong>
+              <p style="color:var(--muted)">OG brings the Solana holders together — memes, rewards, and vibes.</p>
+            </div>
+          </div>
+
+          <div class="lore-card">
+    <img src="assets/OGTEAM.jpeg" alt="">
+    <div>
+    <strong>Community-Led</strong>
+    <p style="color:var(--muted)">
+      Every decision is driven by the OG community — shaping OG’s story together.
+    </p>
+    </div>
+  </div>
+
+      </section>
+
+      <!-- GALLERY -->
+<section id="gallery-editions">
+  <h2>OG Characters</h2>
+
+  <div class="tweet-strip" id="tweetStrip" style="margin-bottom:40px">
+    <div class="tweet">
+      <img src="assets/REALOG.jpeg" alt="">
+      <div>
+        <div style="font-weight:800;margin-bottom:6px">Real OG Edition</div>
+        <div class="t-body">
+           The very first OG, a symbol of confidence and calm for all HODLers in the market.
+        </div>
+      </div>
+    </div>
+
+    <div class="tweet">
+      <img src="assets/OGWHALE.jpeg" alt="">
+      <div>
+        <div style="font-weight:800;margin-bottom:6px">OG Whale Edition</div>
+        <div class="t-body">
+           Always big, always bold. Commands respect from all other OGs in the space.
+        </div>
+      </div>
+    </div>
+
+    <div class="tweet">
+      <img src="assets/OGDIAMONDHAND.jpeg" alt="">
+      <div>
+        <div style="font-weight:800;margin-bottom:6px">OG Diamond Hand Edition </div>
+        <div class="t-body">
+           Never sells, never panics. A true legend of HODLing.
+        </div>
+      </div>
+    </div>
+
+    <div class="tweet">
+      <img src="assets/OGMOON.jpeg" alt="">
+      <div>
+        <div style="font-weight:800;margin-bottom:6px">OG Wen Edition </div>
+        <div class="t-body">
+          Always asking, "Wen Moon? Wen Lambo?" Reminds everyone to stay patient while keeping the hype alive.
+        </div>
+      </div>
+    </div>
+
+    <div class="tweet">
+      <img src="assets/OGTRADER.jpeg" alt="">
+      <div>
+        <div style="font-weight:800;margin-bottom:6px">OG Trader Edition </div>
+        <div class="t-body">
+          Always analyzing, always moving. always watching the charts, ready to pounce.
+        </div>
+      </div>
+    </div>
+
+    <div class="tweet">
+      <img src="assets/OGDEGEN.jpeg" alt="">
+      <div>
+        <div style="font-weight:800;margin-bottom:6px">OG Degen Edition </div>
+        <div class="t-body">
+           Reckless, wild, and risky. living on the edge, taking Solana adventures to the max.
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+  <section id="gallery-support">
+  <h2>OG Support — Tweet Mentions</h2>
+ <div class="gallery-strip" id="galleryStrip">
+  <div class="gallery-item">
+    <img src="assets/REALOG.jpeg" alt="">
+    <div class="caption">@Example mentioned OG on X</div>
+  </div>
+  <div class="gallery-item">
+    <img src="assets/REALOG.jpeg" alt="">
+    <div class="caption">@Example mentioned OG on X</div>
+  </div>
+  <div class="gallery-item">
+    <img src="assets/REALOG.jpeg" alt="">
+    <div class="caption">@Example mentioned OG on X</div>
+  </div>
+  <div class="gallery-item">
+    <img src="assets/REALOG.jpeg" alt="">
+    <div class="caption">@Example mentioned OG on X</div>
+  </div>
+  <div class="gallery-item">
+    <img src="assets/REALOG.jpeg" alt="">
+    <div class="caption">@Example mentioned OG on X</div>
+  </div>
+  <div class="gallery-item">
+    <img src="assets/REALOG.jpeg" alt="">
+    <div class="caption">@Example mentioned OG on X</div>
+  </div>
+  <div class="gallery-item">
+    <img src="assets/REALOG.jpeg" alt="">
+    <div class="caption">@Example mentioned OG on X</div>
+  </div>
+
+  <!-- tambah lagi sesuai mentions -->
+</div>
+</section>
+
+      <!-- BUY -->
+      <section id="buy">
+        <h2>Support $OG — The Solana Holder</h2>
+        <p style="color:var(--muted)">Support OG by buying $OG on popular Solana DEXs. Use official links below.</p>
+
+        <div class="support-row">
+          <div class="support-card"><img src="assets/JUP.jpg" alt="" style="width:44px;height:44px;border-radius:8px"><div><div style="font-weight:800">Buy on Jupiter</div><a href="https://jup.ag/" target="_blank">Open Jupiter</a></div></div>
+          <div class="support-card"><img src="assets/raydium.png" alt="" style="width:44px;height:44px;border-radius:8px"><div><div style="font-weight:800">Buy on Raydium</div><a href="https://raydium.io/" target="_blank">Open Raydium</a></div></div>
+          <div class="support-card"><img src="assets/Dexscreener.png" alt="" style="width:44px;height:44px;border-radius:8px"><div><div style="font-weight:800">Dexscreener</div><a href="https://dexscreener.com/" target="_blank">View chart</a></div></div>
+        </div>
+      </section>
+
+      <!-- TEAM -->
+      <section id="team">
+       <h2>Team & Contributors</h2>
+<div class="team-row">
+  <div class="member">
+    <img src="assets/OGTEAM.jpeg" alt="">
+    <div style="font-weight:700">OG Community</div>
+    <a href="https://twitter.com/" target="_blank" style="font-size:13px;color:var(--accent1);text-decoration:none">Community</a>
+  </div>
+
+  <div class="member">
+    <img src="assets/OGDEV.jpeg" alt="">
+    <div style="font-weight:700">OG Dev</div>
+    <a href="https://x.com/OGMeowgician" target="_blank" style="font-size:13px;color:var(--accent1);text-decoration:none">@OGMeowgician</a>
+  </div>
+
+  <div class="member">
+    <img src="assets/OGMOD.jpeg" alt="">
+    <div style="font-weight:700">OG Mod</div>
+    <a href="https://twitter.com/" target="_blank" style="font-size:13px;color:var(--accent1);text-decoration:none">Soon</a>
+  </div>
+</div>
+
+      </section>
+    </main>
+
+    <footer>
+      <p>© 2025 $OG — The Solana Holder. All rights reserved.</p>
+    </footer>
+  </div>
+  <script>
+    // === COSMIC RAIN SCRIPT ===
+    const cosmicContainer = document.getElementById("cosmicRain");
+    const solanaLogo = "assets/sol.png"; // ganti path sesuai logo solana lu
+    const maxDrops = 25;
+
+    function createSolanaDrop() {
+      const drop = document.createElement("img");
+      drop.src = solanaLogo;
+      drop.classList.add("solana-drop");
+      drop.style.left = Math.random() * 100 + "vw";
+      drop.style.animationDuration = 5 + Math.random() * 5 + "s";
+      drop.style.width = 20 + Math.random() * 20 + "px";
+      drop.style.height = drop.style.width;
+      drop.style.opacity = 0.6 + Math.random() * 0.4;
+      cosmicContainer.appendChild(drop);
+
+      drop.addEventListener("animationend", () => drop.remove());
+    }
+
+    setInterval(() => {
+      if (document.hidden) return;
+      if (document.querySelectorAll(".solana-drop").length < maxDrops) {
+        createSolanaDrop();
+      }
+    }, 400);
+  </script>
+  <script>
+  const copyBtn = document.getElementById('copyContract');
+  const contractAddress = document.getElementById('contractAddress');
+
+  copyBtn.addEventListener('click', () => {
+    navigator.clipboard.writeText(contractAddress.textContent)
+      .then(() => {
+        copyBtn.textContent = 'Copied!';
+        setTimeout(() => copyBtn.textContent = 'Copy', 1500);
+      })
+      .catch(err => {
+        console.error('Failed to copy: ', err);
+      });
+  });
+</script>
+
+</body>
+</html>
